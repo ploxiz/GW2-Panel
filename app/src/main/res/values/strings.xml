@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">GW2 Panel</string>
+
+    <string name="title_section1">News</string>
+    <string name="title_section2">Timer</string>
+    <string name="title_section3">Legendary Progress</string>
+    <string name="title_section4">Trading Post</string>
+    <string name="title_section5">WvW Status</string>
+    <string name="title_section6">Item Database</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
