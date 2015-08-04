@@ -1,14 +1,23 @@
 package com.gw2panel.android;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.gw2panel.android.adapters.NewsAdapter;
+import com.gw2panel.android.adapters.objects.NewsObject;
+import com.gw2panel.android.modules.News;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class NewsFragment extends Fragment {
     /**
@@ -16,31 +25,35 @@ public class NewsFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static Context context = null;
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static NewsFragment newInstance(int sectionNumber, Context activityContext) {
+    public static NewsFragment newInstance(int sectionNumber) {
         NewsFragment fragment = new NewsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
-        context = activityContext;
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_news, container, false);
 
-        if (isNetworkAvailable()) {
-            // TODO:
-        } else {
-            // TODO:
-        }
+        final TextView errorMessage = (TextView) rootView.findViewById(R.id.news_textview_error);
+        final Button retryButton = (Button) rootView.findViewById(R.id.news_button_retry);
+        final ListView listView = (ListView) rootView.findViewById(R.id.news_listView);
+
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new task(errorMessage, retryButton, listView).execute();
+            }
+        });
+        new task(errorMessage, retryButton, listView).execute();
 
         return rootView;
     }
@@ -52,11 +65,93 @@ public class NewsFragment extends Fragment {
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    private class task extends AsyncTask<Void, Void, News> {
 
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        private ProgressDialog dialog;
+
+        private TextView mErrorMessage;
+        private Button mRetryButton;
+        private ListView mListView;
+
+        public task(TextView errorMessage, Button retryButton, ListView listView) {
+            this.mErrorMessage = errorMessage;
+            this.mRetryButton = retryButton;
+            this.mListView = listView;
+            dialog = new ProgressDialog(getActivity());
+        }
+
+        @Override
+        protected News doInBackground(Void... params) {
+            try {
+                return new News();
+            } catch (IOException e) {
+                e.printStackTrace();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showError(mErrorMessage, mRetryButton, true);
+                    }
+                });
+                return null;
+            }
+        }
+
+        protected void onPreExecute() {
+            this.dialog.setMessage("Retrieving data...");
+            this.dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(final News news) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            if (news != null) {
+                // Checks if there is a connection problem and reacts accordingly.
+                if (news.getTitles().isEmpty()) {
+                    showError(mErrorMessage, mRetryButton, true);
+                    mRetryButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                news.fetchNews(); // TODO: ?
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (!news.getTitles().isEmpty()) {
+                                showError(mErrorMessage, mRetryButton, false);
+                                populateListView(mListView, news);
+                            }
+                        }
+                    });
+                } else {
+                    showError(mErrorMessage, mRetryButton, false);
+                    populateListView(mListView, news);
+                }
+            }
+        }
     }
+
+    // Also includes the retry button.
+    private void showError(TextView errorMessage, Button retryButton, boolean b) {
+        if (b) {
+            errorMessage.setVisibility(View.VISIBLE);
+            retryButton.setVisibility(View.VISIBLE);
+        } else {
+            errorMessage.setVisibility(View.INVISIBLE);
+            retryButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void populateListView(ListView listView, News news) {
+        ArrayList<NewsObject> newsObject = new ArrayList<>();
+
+        for (int i = 0; i < news.getTitles().size(); i++) {
+            newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
+        }
+
+        NewsAdapter newsAdapter = new NewsAdapter(getActivity(), newsObject);
+        listView.setAdapter(newsAdapter);
+    }
+
 }

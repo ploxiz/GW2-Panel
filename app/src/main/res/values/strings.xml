@@ -12,6 +12,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_example">Example action</string>
-
     <string name="action_settings">Settings</string>
+
+    <string name="connection_error">Check your connection and try again.</string>
+    <string name="retry_button">Retry</string>
+
+    <string name="news_listitem_placeholder1">news_textview_title</string>
+    <string name="news_listitem_placeholder2">news_textview_description</string>
+    <string name="news_listitem_placeholder3">news_textview_date</string>
 </resources>

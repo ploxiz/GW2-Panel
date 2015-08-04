@@ -2,6 +2,8 @@ package com.gw2panel.android.modules;
 
 //  import android.os.StrictMode;
 
+import android.os.AsyncTask;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +21,12 @@ public class News {
     private List<String> dates = new ArrayList<>();
     private List<String> urls = new ArrayList<>();
 
-    public News() {
+    public News() throws IOException{
         fetchNews();
     }
 
-    public void connect() throws IOException {
-        source = Jsoup.connect("https://www.guildwars2.com/en/news/").get();
+    public void connect() throws IOException{
+        source = Jsoup.connect("https://guildwars2.com/en/news/").get();
     }
 
     public void fetchTitles() {
@@ -60,29 +62,16 @@ public class News {
 
     public String fetchFullPost(int id) throws IOException {
         Document postSource = Jsoup.connect(urls.get(id)).get();
-
         Element post = postSource.getElementsByClass("text").first();
-
         return post.text();
     }
 
-    public void fetchNews() {
-
-        /*
-        // TODO: not exactly the ideal way of getting through android.os.NetworkOnMainThreadException (should find a different solution)
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        */
-
-        try {
-            connect();
-            fetchTitles();
-            fetchDescriptions();
-            fetchDates();
-            fetchURLs();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void fetchNews() throws IOException{
+        connect();
+        fetchTitles();
+        fetchDescriptions();
+        fetchDates();
+        fetchURLs();
     }
 
     public List<String> getTitles() {
@@ -96,4 +85,5 @@ public class News {
     public List<String> getDates() {
         return dates;
     }
+
 }
