@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,10 +52,10 @@ public class NewsFragment extends Fragment {
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new task(errorMessage, retryButton, listView).execute();
+                new Task(errorMessage, retryButton, listView).execute();
             }
         });
-        new task(errorMessage, retryButton, listView).execute();
+        new Task(errorMessage, retryButton, listView).execute();
 
         return rootView;
     }
@@ -65,7 +67,8 @@ public class NewsFragment extends Fragment {
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
-    private class task extends AsyncTask<Void, Void, News> {
+    // In order to avoid using a network operation in the main thread.
+    private class Task extends AsyncTask<Void, Void, News> {
 
         private ProgressDialog dialog;
 
@@ -73,10 +76,11 @@ public class NewsFragment extends Fragment {
         private Button mRetryButton;
         private ListView mListView;
 
-        public task(TextView errorMessage, Button retryButton, ListView listView) {
+        public Task(TextView errorMessage, Button retryButton, ListView listView) {
             this.mErrorMessage = errorMessage;
             this.mRetryButton = retryButton;
             this.mListView = listView;
+
             dialog = new ProgressDialog(getActivity());
         }
 
@@ -97,7 +101,7 @@ public class NewsFragment extends Fragment {
         }
 
         protected void onPreExecute() {
-            this.dialog.setMessage("Retrieving data...");
+            this.dialog.setMessage("Retrieving content...");
             this.dialog.show();
         }
 
@@ -107,7 +111,7 @@ public class NewsFragment extends Fragment {
                 dialog.dismiss();
             }
             if (news != null) {
-                // Checks if there is a connection problem and reacts accordingly.
+                // Checks if there was a connection problem and reacts accordingly.
                 if (news.getTitles().isEmpty()) {
                     showError(mErrorMessage, mRetryButton, true);
                     mRetryButton.setOnClickListener(new View.OnClickListener() {
@@ -121,37 +125,56 @@ public class NewsFragment extends Fragment {
                             if (!news.getTitles().isEmpty()) {
                                 showError(mErrorMessage, mRetryButton, false);
                                 populateListView(mListView, news);
+                                initializeNewsBigFragment(news);
                             }
                         }
                     });
                 } else {
                     showError(mErrorMessage, mRetryButton, false);
                     populateListView(mListView, news);
+                    initializeNewsBigFragment(news);
                 }
             }
         }
-    }
 
-    // Also includes the retry button.
-    private void showError(TextView errorMessage, Button retryButton, boolean b) {
-        if (b) {
-            errorMessage.setVisibility(View.VISIBLE);
-            retryButton.setVisibility(View.VISIBLE);
-        } else {
-            errorMessage.setVisibility(View.INVISIBLE);
-            retryButton.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void populateListView(ListView listView, News news) {
-        ArrayList<NewsObject> newsObject = new ArrayList<>();
-
-        for (int i = 0; i < news.getTitles().size(); i++) {
-            newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
+        // Also includes the retry button.
+        private void showError(TextView errorMessage, Button retryButton, boolean b) {
+            if (b) {
+                errorMessage.setVisibility(View.VISIBLE);
+                retryButton.setVisibility(View.VISIBLE);
+            } else {
+                errorMessage.setVisibility(View.INVISIBLE);
+                retryButton.setVisibility(View.INVISIBLE);
+            }
         }
 
-        NewsAdapter newsAdapter = new NewsAdapter(getActivity(), newsObject);
-        listView.setAdapter(newsAdapter);
-    }
+        private void populateListView(ListView listView, News news) {
+            ArrayList<NewsObject> newsObject = new ArrayList<>();
 
+            for (int i = 0; i < news.getTitles().size(); i++) {
+                newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
+            }
+
+            NewsAdapter newsAdapter = new NewsAdapter(getActivity(), newsObject);
+            listView.setAdapter(newsAdapter);
+        }
+
+        private void initializeNewsBigFragment(final News news) {
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("url", news.getURLs().get(position));
+
+                    Fragment newsBigFragment = new NewsBigFragment();
+                    newsBigFragment.setArguments(bundle);
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, newsBigFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
+    }
 }

@@ -60,12 +60,6 @@ public class News {
         }
     }
 
-    public String fetchFullPost(int id) throws IOException {
-        Document postSource = Jsoup.connect(urls.get(id)).get();
-        Element post = postSource.getElementsByClass("text").first();
-        return post.text();
-    }
-
     public void fetchNews() throws IOException{
         connect();
         fetchTitles();
@@ -84,6 +78,10 @@ public class News {
 
     public List<String> getDates() {
         return dates;
+    }
+
+    public List<String> getURLs() {
+        return urls;
     }
 
 }

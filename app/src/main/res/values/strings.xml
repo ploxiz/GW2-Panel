@@ -17,7 +17,11 @@
     <string name="connection_error">Check your connection and try again.</string>
     <string name="retry_button">Retry</string>
 
-    <string name="news_listitem_placeholder1">news_textview_title</string>
-    <string name="news_listitem_placeholder2">news_textview_description</string>
-    <string name="news_listitem_placeholder3">news_textview_date</string>
+    <string name="news_placeholder1">news_textview_title</string>
+    <string name="news_placeholder2">news_textview_description</string>
+    <string name="news_placeholder3">news_textview_date</string>
+
+    <string name="news_big_placeholder1">news_big_textview_title</string>
+    <string name="news_big_placeholder2">news_big_textview_attribution</string>
+    <string name="news_big_placeholder3">news_big_textview_post</string>
 </resources>
