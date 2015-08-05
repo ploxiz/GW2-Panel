@@ -48,7 +48,6 @@ public class NewsBigFragment extends Fragment {
 
         final TextView titleTextView = (TextView) rootView.findViewById(R.id.news_big_textview_title);
         final TextView attributionTextView = (TextView) rootView.findViewById(R.id.news_big_textview_attribution);
-        final TextView postTextView = (TextView) rootView.findViewById(R.id.news_big_textview_post);
         final WebView webView = (WebView) rootView.findViewById(R.id.webView);
         final TextView errorMessage = (TextView) rootView.findViewById(R.id.news_big_textview_error);
         final Button retryButton = (Button) rootView.findViewById(R.id.news_big_button_retry);
@@ -61,10 +60,10 @@ public class NewsBigFragment extends Fragment {
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Task(titleTextView, attributionTextView, postTextView, url, webView, errorMessage, retryButton).execute();
+                new Task(titleTextView, attributionTextView, url, webView, errorMessage, retryButton).execute();
             }
         });
-        new Task(titleTextView, attributionTextView, postTextView, url, webView, errorMessage, retryButton).execute();
+        new Task(titleTextView, attributionTextView, url, webView, errorMessage, retryButton).execute();
 
         return rootView;
     }
@@ -75,7 +74,6 @@ public class NewsBigFragment extends Fragment {
 
         private TextView mTitleTextView;
         private TextView mAttributionTextView;
-        private TextView mPostTextView;
         private WebView mWebView;
         private TextView mErrorMessage;
         private Button mRetryButton;
@@ -83,12 +81,10 @@ public class NewsBigFragment extends Fragment {
         private String url;
         private String title;
         private String attribution;
-        private String post;
 
-        public Task(TextView titleTextView, TextView attributionTextView, TextView postTextView, String u, WebView webView, TextView errorMessage, Button retryButton) {
+        public Task(TextView titleTextView, TextView attributionTextView, String u, WebView webView, TextView errorMessage, Button retryButton) {
             this.mTitleTextView = titleTextView;
             this.mAttributionTextView = attributionTextView;
-            this.mPostTextView = postTextView;
             this.mWebView = webView;
             this.mErrorMessage = errorMessage;
             this.mRetryButton = retryButton;
@@ -112,7 +108,6 @@ public class NewsBigFragment extends Fragment {
 
                 Element postElement = source.getElementsByClass("text").first();
                 postElement.select("object").remove(); // Basically removes flash applications.
-                post = postElement.text();
 
                 return postElement.html();
             }
@@ -138,12 +133,12 @@ public class NewsBigFragment extends Fragment {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            if (post != null) {
-                result = "<html><head><style>img, iframe { max-width: 100%; width: auto; height: auto; } </style></head><body>" + result + "</body></html>";
+            if (result != null) {
+                result = "<html><head><style>img, iframe{ max-width: 100%; width: auto; height: auto; }</style></head><body>"
+                        + result + "</body></html>";
                 showError(mErrorMessage, mRetryButton, false);
                 mTitleTextView.setText(title);
                 mAttributionTextView.setText(attribution);
-                mPostTextView.setText(post);
                 mWebView.loadDataWithBaseURL("http:///android_asset/", result, "text/html", "UTF-8", "");
             }
         }
