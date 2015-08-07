@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,7 +47,7 @@ public class NewsBigFragment extends Fragment {
 
         final TextView titleTextView = (TextView) rootView.findViewById(R.id.news_big_textview_title);
         final TextView attributionTextView = (TextView) rootView.findViewById(R.id.news_big_textview_attribution);
-        final WebView webView = (WebView) rootView.findViewById(R.id.webView);
+        final WebView webView = (WebView) rootView.findViewById(R.id.news_webView);
         final TextView errorMessage = (TextView) rootView.findViewById(R.id.news_big_textview_error);
         final Button retryButton = (Button) rootView.findViewById(R.id.news_big_button_retry);
 
@@ -126,15 +125,17 @@ public class NewsBigFragment extends Fragment {
         protected void onPreExecute() {
             dialog.setMessage("Retrieving content...");
             dialog.show();
+            getActivity().setProgressBarIndeterminateVisibility(true);
         }
 
         @Override
         protected void onPostExecute(String result) {
+            getActivity().setProgressBarIndeterminateVisibility(false);
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
             if (result != null) {
-                result = "<html><head><style>img, iframe{ max-width: 100%; width: auto; height: auto; }</style></head><body>"
+                result = "<html><head><style>body {background-color: rgb(238, 238, 238);} img, iframe {max-width: 100%; width: auto; height: auto;}</style></head><body>"
                         + result + "</body></html>";
                 showError(mErrorMessage, mRetryButton, false);
                 mTitleTextView.setText(title);
