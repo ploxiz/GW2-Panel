@@ -24,4 +24,11 @@
     <string name="news_big_placeholder1">news_big_textview_title</string>
     <string name="news_big_placeholder2">news_big_textview_attribution</string>
     <string name="news_big_placeholder3">news_big_textview_post</string>
+
+    <string name="timer_placeholder1">timer_textView_name</string>
+    <string name="timer_placeholder2">timer_textView_status</string>
+    <string name="timer_placeholder3">timer_textView_startTimer</string>
+    <string name="timer_placeholder4">timer_textView_countTimer</string>
+    <string name="timer_textview_start">Starts at</string>
+    <string name="timer_textview_count">Starts in</string>
 </resources>
