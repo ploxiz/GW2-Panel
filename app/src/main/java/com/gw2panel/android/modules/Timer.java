@@ -15,149 +15,161 @@ import java.util.concurrent.TimeUnit;
 
 public class Timer {
 
-    private static String[][] events = new String[][] {
-            {"000000", "Taidha Convington,Tequatl"},
-            {"001500", "Frozen Maw"},
-            {"003000", "Megadestroyer"},
-            {"004500", "Fire Elemental"},
-            {"010000", "The Shatterer,Evolved Jungle Wurm"},
-            {"011500", "Jungle Wurm"},
-            {"013000", "Modniir Ulgoth"},
-            {"014500", "Shadow Behemoth"},
-            {"020000", "Golem Mark II, Karka Queen"},
-            {"021500", "Frozen Maw"},
-            {"023000", "Claw of Jormag"},
-            {"024500", "Fire Elemental"},
-            {"030000", "Taidha Convington"},
-            {"031500", "Jungle Wurm"},
-            {"033000", "Megadestroyer"},
-            {"034500", "Shadow Behemoth"},
-            {"040000", "The Shatterer,Evolved Jungle Wurm"},
-            {"041500", "Frozen Maw"},
-            {"043000", "Modniir Ulgoth"},
-            {"044500", "Fire Elemental"},
-            {"050000", "Golem Mark II"},
-            {"051500", "Jungle Wurm"},
-            {"053000", "Claw of Jormag"},
-            {"054500", "Shadow Behemoth"},
-            {"060000", "Taidha Covington,Karka Queen"},
-            {"061500", "Frozen Maw"},
-            {"063000", "Megadestroyer"},
-            {"064500", "Fire Elemental"},
-            {"070000", "The Shatterer,Tequatl"},
-            {"071500", "Jungle Wurm"},
-            {"073000", "Modniir Ulgoth"},
-            {"074500", "Shadow Behemoth"},
-            {"080000", "Golem Mark II,Evolved Jungle Wurm"},
-            {"081500", "Frozen Maw"},
-            {"083000", "Claw of Jormag"},
-            {"084500", "Fire Elemental"},
-            {"090000", "Taidha Covington"},
-            {"091500", "Jungle Wurm"},
-            {"093000", "Megadestroyer"},
-            {"094500", "Shadow Behemoth"},
-            {"100000", "The Shatterer"},
-            {"101500", "Frozen Maw"},
-            {"103000", "Modniir Ulgoth,Karka Queen"},
-            {"104500", "Fire Elemental"},
-            {"110000", "Golem Mark II"},
-            {"111500", "Jungle Wurm"},
-            {"113000", "Claw of Jormag,Tequatl"},
-            {"114500", "Shadow Behemoth"},
-            {"120000", "Taidha Covington"},
-            {"121500", "Frozen Maw"},
-            {"123000", "Megadestroyer,Evolved Jungle Wurm"},
-            {"124500", "Fire Elementa"},
-            {"130000", "The Shatterer"},
-            {"131500", "Jungle Wurm"},
-            {"133000", "Modniir Ulgoth"},
-            {"134500", "Shadow Behemoth"},
-            {"140000", "Golem Mark II"},
-            {"141500", "Frozen Maw"},
-            {"143000", "Claw of Jormag"},
-            {"144500", "Fire Elemental"},
-            {"150000", "Taidha Covington,Karka Queen"},
-            {"151500", "Jungle Wurm"},
-            {"153000", "Megadestroyer"},
-            {"154500", "Shadow Behemoth"},
-            {"160000", "The Shatterer,Tequatl"},
-            {"161500", "Frozen Maw"},
-            {"163000", "Modniir Ulgoth"},
-            {"164500", "Fire Elemental"},
-            {"170000", "Golem Mark II,Evolved Jungle Wurm"},
-            {"171500", "Jungle Wurm"},
-            {"173000", "Claw of Jormag"},
-            {"174500", "Shadow Behemoth"},
-            {"180000", "Taidha Covington,Karka Queen"},
-            {"181500", "Frozen Maw"},
-            {"183000", "Megadestroyer"},
-            {"184500", "Fire Elemental"},
-            {"190000", "The Shatterer,Tequatl"},
-            {"191500", "Jungle Wurm"},
-            {"193000", "Modniir Ulgoth"},
-            {"194500", "Shadow Behemoth"},
-            {"200000", "Golem Mark II,Evolved Jungle Wurm"},
-            {"201500", "Frozen Maw"},
-            {"203000", "Claw of Jormag"},
-            {"204500", "Fire Elemental"},
-            {"210000", "Taidha Covington"},
-            {"211500", "Jungle Wurm"},
-            {"213000", "Megadestroyer"},
-            {"214500", "Shadow Behemoth"},
-            {"220000", "The Shatterer"},
-            {"221500", "Frozen Maw"},
-            {"223000", "Modniir Ulgoth"},
-            {"224500", "Fire Elemental"},
-            {"230000", "Golem Mark II,Karka Queen"},
-            {"231500", "Jungle Wurm"},
-            {"233000", "Claw of Jormag"},
-            {"234500", "Shadow Behemoth"}
-    };
-
-    public static HashMap<String, String> upcomingEvents = new HashMap<>();
-
-
     public Timer() {
-        int localTime = getLocalTime();
-        int offset = getCurrentTimeZoneOffset() * 10000;
-        int utcTime = localTime - offset;
+        HashMap<Integer, String> events = new HashMap<>();
+        events.put(0, "Taidha Convington,Tequatl");
+        events.put(15, "Frozen Maw");
+        events.put(30, "Megadestroyer");
+        events.put(45, "Fire Elemental");
+        events.put(60, "The Shatterer,Evolved Jungle Wurm");
+        events.put(75, "Jungle Wurm");
+        events.put(90, "Modniir Ulgoth");
+        events.put(105, "Shadow Behemoth");
+        events.put(120, "Golem Mark II, Karka Queen");
+        events.put(135, "Frozen Maw");
+        events.put(150, "Claw of Jormag");
+        events.put(165, "Fire Elemental");
+        events.put(180, "Taidha Convington");
+        events.put(195, "Jungle Wurm");
+        events.put(210, "Megadestroyer");
+        events.put(225, "Shadow Behemoth");
+        events.put(240, "The Shatterer,Evolved Jungle Wurm");
+        events.put(255, "Frozen Maw");
+        events.put(270, "Modniir Ulgoth");
+        events.put(285, "Fire Elemental");
+        events.put(300, "Golem Mark II");
+        events.put(315, "Jungle Wurm");
+        events.put(330, "Claw of Jormag");
+        events.put(345, "Shadow Behemoth");
+        events.put(360, "Taidha Covington,Karka Queen");
+        events.put(375, "Frozen Maw");
+        events.put(390, "Megadestroyer");
+        events.put(405, "Fire Elemental");
+        events.put(420, "The Shatterer,Tequatl");
+        events.put(435, "Jungle Wurm");
+        events.put(450, "Modniir Ulgoth");
+        events.put(465, "Shadow Behemoth");
+        events.put(480, "Golem Mark II,Evolved Jungle Wurm");
+        events.put(495, "Frozen Maw");
+        events.put(510, "Claw of Jormag");
+        events.put(525, "Fire Elemental");
+        events.put(540, "Taidha Covington");
+        events.put(555, "Jungle Wurm");
+        events.put(570, "Megadestroyer");
+        events.put(585, "Shadow Behemoth");
+        events.put(600, "The Shatterer");
+        events.put(615, "Frozen Maw");
+        events.put(630, "Modniir Ulgoth,Karka Queen");
+        events.put(645, "Fire Elemental");
+        events.put(660, "Golem Mark II");
+        events.put(675, "Jungle Wurm");
+        events.put(690, "Claw of Jormag,Tequatl");
+        events.put(705, "Shadow Behemoth");
+        events.put(720, "Taidha Covington");
+        events.put(735, "Frozen Maw");
+        events.put(750, "Megadestroyer,Evolved Jungle Wurm");
+        events.put(765, "Fire Elementa");
+        events.put(780, "The Shatterer");
+        events.put(795, "Jungle Wurm");
+        events.put(810, "Modniir Ulgoth");
+        events.put(825, "Shadow Behemoth");
+        events.put(840, "Golem Mark II");
+        events.put(855, "Frozen Maw");
+        events.put(870, "Claw of Jormag");
+        events.put(885, "Fire Elemental");
+        events.put(900, "Taidha Covington,Karka Queen");
+        events.put(915, "Jungle Wurm");
+        events.put(930, "Megadestroyer");
+        events.put(945, "Shadow Behemoth");
+        events.put(960, "The Shatterer,Tequatl");
+        events.put(975, "Frozen Maw");
+        events.put(990, "Modniir Ulgoth");
+        events.put(1005, "Fire Elemental");
+        events.put(1020, "Golem Mark II,Evolved Jungle Wurm");
+        events.put(1035, "Jungle Wurm");
+        events.put(1050, "Claw of Jormag");
+        events.put(1065, "Shadow Behemoth");
+        events.put(1080, "Taidha Covington,Karka Queen");
+        events.put(1095, "Frozen Maw");
+        events.put(1110, "Megadestroyer");
+        events.put(1125, "Fire Elemental");
+        events.put(1140, "The Shatterer,Tequatl");
+        events.put(1155, "Jungle Wurm");
+        events.put(1170, "Modniir Ulgoth");
+        events.put(1185, "Shadow Behemoth");
+        events.put(1200, "Golem Mark II,Evolved Jungle Wurm");
+        events.put(1215, "Frozen Maw");
+        events.put(1230, "Claw of Jormag");
+        events.put(1245, "Fire Elemental");
+        events.put(1260, "Taidha Covington");
+        events.put(1275, "Jungle Wurm");
+        events.put(1290, "Megadestroyer");
+        events.put(1305, "Shadow Behemoth");
+        events.put(1320, "The Shatterer");
+        events.put(1335, "Frozen Maw");
+        events.put(1350, "Modniir Ulgoth");
+        events.put(1365, "Fire Elemental");
+        events.put(1380, "Golem Mark II,Karka Queen");
+        events.put(1395, "Jungle Wurm");
+        events.put(1410, "Claw of Jormag");
+        events.put(1425, "Shadow Behemoth");
 
-        int position = 0;
-        for (int i = 0; i < events.length; i++) {
-            if (localTime - Integer.parseInt(events[i][0]) > -1500 && localTime - Integer.parseInt(events[i][0]) < 0) {
-                position = i;
+        int offset = getCurrentTimeZoneOffset() * 60; System.out.println("Offset: " + convert(offset));
+        int localTime = getLocalTime(); System.out.println("Local Time: " + convert(localTime));
+        int utcTime = localTime - offset; System.out.println("UTC Time: " + convert(utcTime));
+
+        int nextEventTime = 0;
+        for (int eventTime : events.keySet()) {
+            if (utcTime - eventTime <= 0 && utcTime - eventTime > -15) {
+                nextEventTime = eventTime; System.out.println("Next event: " + events.get(nextEventTime) + " at " + convert(nextEventTime + offset));
                 break;
             }
         }
 
-        for (int i = position; i < events.length; i++) {
-            upcomingEvents.put(events[i][0], events[i][1]);
+        HashMap<Integer, String> upcomingEvents = new HashMap<>();
+        for (int i = nextEventTime; i <= 1425; i = i + 15) {
+            upcomingEvents.put(i, events.get(i));
         }
-        int i = 0;
-        while (upcomingEvents.size() < 10) {
-            upcomingEvents.put(events[i][0], events[i][1]);
-            i++;
+        if (upcomingEvents.size() < 10) {
+            int i = 0;
+            while (upcomingEvents.size() == 10) {
+                upcomingEvents.put(i, events.get(i));
+                i = i + 15;
+            }
         }
+        for (int time : upcomingEvents.keySet()) {
+            System.out.println(upcomingEvents.get(time) + " at " + convert(time));
+        }
+
     }
 
-    private static int getLocalTime() {
+    private int getLocalTime() {
         DateTime time = new DateTime();
 
-        int second = time.getSecondOfMinute();
+        int second = time.getSecondOfMinute(); // TODO: add seconds - ENCHANTMENT
         int minute = time.getMinuteOfHour();
         int hour = time.getHourOfDay();
 
-        return Integer.parseInt(format(hour) + format(minute) + format(second)); // TODO: int=>no0
+        return hour * 60 + minute;
     }
 
-    private static String format(int l) {
-        if (l < 10) {
-            return "0" + Integer.toString(l);
+    private String convert(int time) {
+        int hour = time / 60;
+        int minute = time % 60;
+
+        String hourString = Integer.toString(hour);
+        String minuteString = Integer.toString(minute);
+        if (hour < 10) {
+            hourString = "0" + Integer.toString(hour);
         }
-        return Integer.toString(l);
+        if (minute < 10) {
+            minuteString = "0" + Integer.toString(minute);
+        }
+
+        return hourString + ":" + minuteString;
     }
 
-    private static int getCurrentTimeZoneOffset() {
+    private int getCurrentTimeZoneOffset() { // TODO: check with negative offset! - BUG
         DateTimeZone tz = DateTimeZone.getDefault();
         Long instant = DateTime.now().getMillis();
         long offsetInMilliseconds = tz.getOffset(instant);
@@ -165,36 +177,7 @@ public class Timer {
     }
 
     public static void main(String[] args) {
-
-        int localTime = getLocalTime();
-        System.out.println("Local Time: " + localTime);
-
-        int offset = getCurrentTimeZoneOffset() * 10000;
-        System.out.println("Offset: " + offset);
-
-        int utcTime = localTime - offset;
-        System.out.println("UTC Time: " + utcTime);
-
-        int position = 0;
-        for (int i = 0; i < events.length; i++) {
-            if (localTime - Integer.parseInt(events[i][0]) > -1500 && localTime - Integer.parseInt(events[i][0]) < 0) {
-                position = i;
-                break;
-            }
-        }
-        System.out.println(events[position][1]);
-
-        for (int i = position; i < events.length; i++) {
-            upcomingEvents.put(events[i][0], events[i][1]);
-        }
-        int i = 0;
-        while (upcomingEvents.size() < 10) {
-            upcomingEvents.put(events[i][0], events[i][1]);
-            i++;
-        }
-        for (Map.Entry<String, String> upcomingEvent: upcomingEvents.entrySet()) {
-            System.out.println(upcomingEvent.getKey() + " " + upcomingEvent.getValue());
-        }
+        new Timer();
     }
 
 }
