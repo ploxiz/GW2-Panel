@@ -42,7 +42,7 @@ public class TimerAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.timer_listview_layout, null);

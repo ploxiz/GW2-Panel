@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.gw2panel.android.adapters.NewsAdapter;
 import com.gw2panel.android.adapters.objects.NewsObject;
-import com.gw2panel.android.modules.News;
+import com.gw2panel.android.modules.news.News;
 
 import java.io.IOException;
 import java.util.ArrayList;

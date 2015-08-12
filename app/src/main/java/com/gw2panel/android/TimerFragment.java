@@ -1,12 +1,23 @@
 package com.gw2panel.android;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.gw2panel.android.adapters.NewsAdapter;
+import com.gw2panel.android.adapters.TimerAdapter;
+import com.gw2panel.android.adapters.objects.TimerObject;
+import com.gw2panel.android.modules.timer.Event;
+import com.gw2panel.android.modules.timer.Timer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class TimerFragment extends Fragment {
     /**
@@ -31,6 +42,16 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_timer, container, false);
+
+        final ListView listView = (ListView) rootView.findViewById(R.id.timer_listView);
+        TextView eventName = (TextView) rootView.findViewById(R.id.timer_textView_name);
+        TextView eventStart = (TextView) rootView.findViewById(R.id.timer_textView_startTimer);
+        TextView eventCount = (TextView) rootView.findViewById(R.id.timer_textView_countTimer);
+
+        final Timer timer = new Timer();
+
+        populateListView(listView, timer);
+
         return rootView;
     }
 
@@ -39,5 +60,19 @@ public class TimerFragment extends Fragment {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    private void populateListView(ListView listView, Timer timer) {
+        List<Event> upcomingEvents = timer.getUpcomingEvents();
+
+        ArrayList<TimerObject> timerObject = new ArrayList<>();
+
+        for (int i = 0; i < upcomingEvents.size(); i++) {
+            // newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
+            timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "In progress", timer.convert(upcomingEvents.get(i).getTime() + timer.getOffset()) , "PLACEHOLDER"));
+        }
+
+        TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
+        listView.setAdapter(timerAdapter);
     }
 }

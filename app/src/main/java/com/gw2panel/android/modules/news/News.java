@@ -1,4 +1,4 @@
-package com.gw2panel.android.modules;
+package com.gw2panel.android.modules.news;
 
 //  import android.os.StrictMode;
 
