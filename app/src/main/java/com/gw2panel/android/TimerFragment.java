@@ -67,9 +67,11 @@ public class TimerFragment extends Fragment {
 
         ArrayList<TimerObject> timerObject = new ArrayList<>();
 
-        for (int i = 0; i < upcomingEvents.size(); i++) {
+        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", Integer.toString(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
+        for (int i = 1; i < upcomingEvents.size(); i++) {
             // newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
             // timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "In progress", timer.convert(upcomingEvents.get(i).getTime() + timer.getOffset()) , "PLACEHOLDER"));
+            timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "Upcoming", Integer.toString(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
         }
 
         TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);

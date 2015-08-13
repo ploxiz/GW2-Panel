@@ -29,6 +29,6 @@
     <string name="timer_placeholder2">timer_textView_status</string>
     <string name="timer_placeholder3">timer_textView_startTimer</string>
     <string name="timer_placeholder4">timer_textView_countTimer</string>
-    <string name="timer_textview_start">Starts at</string>
-    <string name="timer_textview_count">Starts in</string>
+    <string name="timer_placeholder5">Starts at</string>
+    <string name="timer_placeholder6">Starts in</string>
 </resources>

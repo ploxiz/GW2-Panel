@@ -57,7 +57,7 @@ public class TimerAdapter extends BaseAdapter {
         holder.name.setText(objects.get(position).getProp1());
         holder.status.setText(objects.get(position).getProp2());
         holder.startTimer.setText(objects.get(position).getProp3());
-        holder.countTimer.setText(objects.get(position).getProp3());
+        holder.countTimer.setText(objects.get(position).getProp4());
         return convertView;
     }
 

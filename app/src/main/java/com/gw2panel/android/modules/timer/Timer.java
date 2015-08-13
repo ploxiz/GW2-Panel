@@ -110,15 +110,15 @@ public class Timer {
         events.add(new Event(1410, "Claw of Jormag"));
         events.add(new Event(1425, "Shadow Behemoth"));
 
-        refresh();
+        fetch();
     }
 
-    public void refresh() {
+    public void fetch() {
         int nextUpcomingEventIndex = fetchNextUpcomingEventIndex(); System.out.println("Index = " + nextUpcomingEventIndex); // out
-        int offset = getCurrentTimeZoneOffset() * 60; System.out.println("Offset: " + convert(offset)); // out
+        int offset = getCurrentTimeZoneOffset(); System.out.println("Offset: " + convert(offset)); // out
 
-        if (events.size() - 1 - nextUpcomingEventIndex >= 10) {
-            for (int i = nextUpcomingEventIndex; i < nextUpcomingEventIndex + 10; i++ ) {
+        if (events.size() - 1 - nextUpcomingEventIndex >= 15) {
+            for (int i = nextUpcomingEventIndex; i < nextUpcomingEventIndex + 15; i++ ) {
                 upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
             }
         } else {
@@ -126,15 +126,13 @@ public class Timer {
                 upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
             }
             int i = 0;
-            while (upcomingEvents.size() < 10) {
+            while (upcomingEvents.size() < 15) {
                 upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
             }
         }
         for (Event event : upcomingEvents) {
             System.out.println(event.getName() + " at " + convert(event.getTime())); // out
         }
-
-
     }
 
     private int fetchNextUpcomingEventIndex() {
@@ -145,7 +143,7 @@ public class Timer {
         int timeUTC = hour + minute; System.out.println("UTC Time: " + convert(timeUTC));
         int nextEventIndex = 0;
         for (Event event : events) {
-            if (timeUTC - event.getTime() < 0 && timeUTC - event.getTime() >= -15) {
+            if (timeUTC - event.getTime() >= 0 && timeUTC - event.getTime() < 15) { // also includes the event which is currently going on!
                 System.out.println(events.get(nextEventIndex).getName() + " at " + convert(events.get(nextEventIndex).getTime()) + " UTC"); // out
                 return nextEventIndex;
             }
@@ -153,6 +151,13 @@ public class Timer {
         }
 
         return 0;
+    }
+
+    private int getCurrentTimeZoneOffset() { // TODO: check with negative offset! - BUG - possibly fixed
+        DateTimeZone tz = DateTimeZone.getDefault();
+        Long instant = DateTime.now().getMillis();
+        long offsetInMilliseconds = tz.getOffset(instant);
+        return (int) TimeUnit.MILLISECONDS.toMinutes(offsetInMilliseconds);
     }
 
     public String convert(int time) {
@@ -174,13 +179,6 @@ public class Timer {
         }
 
         return hourString + ":" + minuteString;
-    }
-
-    private int getCurrentTimeZoneOffset() { // TODO: check with negative offset! - BUG
-        DateTimeZone tz = DateTimeZone.getDefault();
-        Long instant = DateTime.now().getMillis();
-        long offsetInMilliseconds = tz.getOffset(instant);
-        return (int) TimeUnit.MILLISECONDS.toHours(offsetInMilliseconds);
     }
 
     public List<Event> getUpcomingEvents() {
