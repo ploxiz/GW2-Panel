@@ -128,6 +128,7 @@ public class Timer {
             int i = 0;
             while (upcomingEvents.size() < 15) {
                 upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
+                i++;
             }
         }
         for (Event event : upcomingEvents) {
@@ -160,6 +161,7 @@ public class Timer {
         return (int) TimeUnit.MILLISECONDS.toMinutes(offsetInMilliseconds);
     }
 
+    // used only for testing purposes (feedback in console)
     public String convert(int time) {
         int hour = time / 60;
         int minute = time % 60;

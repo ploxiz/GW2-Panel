@@ -67,14 +67,35 @@ public class TimerFragment extends Fragment {
 
         ArrayList<TimerObject> timerObject = new ArrayList<>();
 
-        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", Integer.toString(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
+        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
         for (int i = 1; i < upcomingEvents.size(); i++) {
             // newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
             // timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "In progress", timer.convert(upcomingEvents.get(i).getTime() + timer.getOffset()) , "PLACEHOLDER"));
-            timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "Upcoming", Integer.toString(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
+            timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), "PLACEHOLDER"));
         }
 
         TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
         listView.setAdapter(timerAdapter);
+    }
+
+    private String convert(int time) {
+        int hour = time / 60;
+        int minute = time % 60;
+
+        String hourString = Integer.toString(hour);
+        String minuteString = Integer.toString(minute);
+
+        if (hour >= 24) {
+            hour = hour - 24;
+        }
+
+        if (hour < 10) {
+            hourString = "0" + Integer.toString(hour);
+        }
+        if (minute < 10 ) {
+            minuteString = "0" + Integer.toString(minute);
+        }
+
+        return hourString + ":" + minuteString;
     }
 }
