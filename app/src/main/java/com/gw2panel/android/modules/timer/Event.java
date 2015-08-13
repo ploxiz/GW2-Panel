@@ -5,9 +5,9 @@ public class Event {
     private Integer time;
     private String name;
 
-    public Event(Integer i, String s) {
-        this.time = i;
-        this.name = s;
+    public Event(Integer time, String name) {
+        this.time = time;
+        this.name = name;
     }
 
     public Integer getTime() {

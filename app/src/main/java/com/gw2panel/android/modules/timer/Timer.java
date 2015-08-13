@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +11,6 @@ public class Timer {
 
     private List<Event> events = new ArrayList<>();
     private List<Event> upcomingEvents = new ArrayList<>();
-    private int offset;
 
     public Timer() {
         events.add(new Event(0, "Taidha Convington,Tequatl"));
@@ -116,45 +114,45 @@ public class Timer {
     }
 
     public void refresh() {
-        offset = getCurrentTimeZoneOffset() * 60;// System.out.println("Offset: " + convert(offset)); // out
-        int localTime = getLocalTime();// System.out.println("Local Time: " + convert(localTime)); // out
-        int utcTime = localTime - offset; // System.out.println("UTC Time: " + convert(utcTime)); // out
+        int nextUpcomingEventIndex = fetchNextUpcomingEventIndex(); System.out.println("Index = " + nextUpcomingEventIndex); // out
+        int offset = getCurrentTimeZoneOffset() * 60; System.out.println("Offset: " + convert(offset)); // out
 
+        if (events.size() - 1 - nextUpcomingEventIndex >= 10) {
+            for (int i = nextUpcomingEventIndex; i < nextUpcomingEventIndex + 10; i++ ) {
+                upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
+            }
+        } else {
+            for (int i = nextUpcomingEventIndex; i < events.size(); i++) {
+                upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
+            }
+            int i = 0;
+            while (upcomingEvents.size() < 10) {
+                upcomingEvents.add(new Event(events.get(i).getTime() + offset, events.get(i).getName()));
+            }
+        }
+        for (Event event : upcomingEvents) {
+            System.out.println(event.getName() + " at " + convert(event.getTime())); // out
+        }
+
+
+    }
+
+    private int fetchNextUpcomingEventIndex() {
+        DateTime dateTime = new DateTime(DateTimeZone.UTC);
+        int hour = dateTime.getHourOfDay() * 60;
+        int minute = dateTime.getMinuteOfHour();
+
+        int timeUTC = hour + minute; System.out.println("UTC Time: " + convert(timeUTC));
         int nextEventIndex = 0;
         for (Event event : events) {
-            if (utcTime - event.getTime() <= 0 && utcTime - event.getTime() > -15) { // TODO: if it's the exact minute(:00, :15, :30, :45) it will show the event that passed - BUG
-                // System.out.println(events.get(nextEventIndex).getName() + " at " + convert(events.get(nextEventIndex).getTime()) + " UTC/" + convert(events.get(nextEventIndex).getTime() + offset) + " Local"); // out
-                break;
+            if (timeUTC - event.getTime() < 0 && timeUTC - event.getTime() >= -15) {
+                System.out.println(events.get(nextEventIndex).getName() + " at " + convert(events.get(nextEventIndex).getTime()) + " UTC"); // out
+                return nextEventIndex;
             }
             nextEventIndex++;
         }
 
-        if (events.size() - 1 - nextEventIndex >= 10) {
-            for (int i = nextEventIndex; i < nextEventIndex + 10; i++) {
-                upcomingEvents.add(events.get(i));
-            }
-        } else {
-            for (int i = nextEventIndex; i < events.size(); i++) {
-                upcomingEvents.add(events.get(i));
-            }
-            int i = 0;
-            while (upcomingEvents.size() < 10) {
-                upcomingEvents.add(events.get(i));
-            }
-        }
-        /*for (Event event : upcomingEvents) {
-            System.out.println(event.getName() + " at " + convert(event.getTime() + offset)); // out
-        }*/
-    }
-
-    private int getLocalTime() {
-        DateTime time = new DateTime();
-
-        int second = time.getSecondOfMinute(); // TODO: add seconds - ENCHANTMENT
-        int minute = time.getMinuteOfHour();
-        int hour = time.getHourOfDay();
-
-        return hour * 60 + minute;
+        return 0;
     }
 
     public String convert(int time) {
@@ -166,13 +164,12 @@ public class Timer {
 
         if (hour >= 24) {
             hour = hour - 24;
-
         }
 
         if (hour < 10) {
             hourString = "0" + Integer.toString(hour);
         }
-        if (minute < 10) {
+        if (minute < 10 ) {
             minuteString = "0" + Integer.toString(minute);
         }
 
@@ -186,20 +183,12 @@ public class Timer {
         return (int) TimeUnit.MILLISECONDS.toHours(offsetInMilliseconds);
     }
 
-    public List<Event> getEvents() {
-        return events;
-    }
-
     public List<Event> getUpcomingEvents() {
         return upcomingEvents;
     }
 
-    public Integer getOffset() {
-        return offset;
-    }
-
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         new Timer();
-    }*/
+    }
 
 }
