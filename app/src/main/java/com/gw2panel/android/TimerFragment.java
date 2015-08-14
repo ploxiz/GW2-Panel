@@ -48,7 +48,8 @@ public class TimerFragment extends Fragment {
         TextView eventStart = (TextView) rootView.findViewById(R.id.timer_textView_startTimer);
         TextView eventCount = (TextView) rootView.findViewById(R.id.timer_textView_countTimer);
 
-        final Timer timer = new Timer();
+        // TODO: there is small delay when calls the Timer. - BUG
+        Timer timer = new Timer();
 
         populateListView(listView, timer);
 

@@ -134,6 +134,18 @@ public class Timer {
         for (Event event : upcomingEvents) {
             System.out.println(event.getName() + " at " + convert(event.getTime())); // out
         }
+
+        // Separates the events which happen at the same time.
+        for (int i = 0; i < upcomingEvents.size(); i++) {
+            if (upcomingEvents.get(i).getName().contains(",")) {
+                String[] split = upcomingEvents.get(i).getName().split(",");
+                String name1 = split[0];
+                String name2 = split[1];
+                int time = upcomingEvents.get(i).getTime();
+                upcomingEvents.get(i).setName(name1);
+                upcomingEvents.add(i + 1, new Event(time, name2));
+            }
+        }
     }
 
     private int fetchNextUpcomingEventIndex() {
