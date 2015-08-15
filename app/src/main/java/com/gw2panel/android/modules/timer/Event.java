@@ -2,7 +2,7 @@ package com.gw2panel.android.modules.timer;
 
 public class Event {
 
-    private Integer time;
+    private int time;
     private String name;
 
     public Event(Integer time, String name) {
@@ -10,7 +10,7 @@ public class Event {
         this.name = name;
     }
 
-    public Integer getTime() {
+    public int getTime() {
         return time;
     }
 

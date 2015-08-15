@@ -2,6 +2,7 @@ package com.gw2panel.android;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.gw2panel.android.adapters.TimerAdapter;
 import com.gw2panel.android.adapters.objects.TimerObject;
 import com.gw2panel.android.modules.timer.Event;
 import com.gw2panel.android.modules.timer.Timer;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +56,15 @@ public class TimerFragment extends Fragment {
 
         populateListView(listView, timer);
 
+        /*final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                handler.postDelayed(this, 60 * 1000);
+            }
+        }, 60 * 1000);
+*/
         return rootView;
     }
 
@@ -68,15 +80,57 @@ public class TimerFragment extends Fragment {
 
         ArrayList<TimerObject> timerObject = new ArrayList<>();
 
-        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), "PLACEHOLDER"));
-        for (int i = 1; i < upcomingEvents.size(); i++) {
-            // newsObject.add(new NewsObject(news.getTitles().get(i), news.getDescriptions().get(i), news.getDates().get(i)));
-            // timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "In progress", timer.convert(upcomingEvents.get(i).getTime() + timer.getOffset()) , "PLACEHOLDER"));
-            timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), "PLACEHOLDER"));
+        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
+        if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
+            timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
+            for (int i = 2; i < upcomingEvents.size(); i++) {
+                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+            }
+        } else {
+            for (int i = 1; i < upcomingEvents.size(); i++) {
+                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+            }
         }
-
         TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
         listView.setAdapter(timerAdapter);
+    }
+
+    private String count(int eventTime) {
+        DateTime dateTime = new DateTime();
+        int hour = dateTime.getHourOfDay() * 60;
+        int minute = dateTime.getMinuteOfHour();
+        int localTime = hour + minute;
+
+        String count = convert(eventTime - localTime);
+        String[] split = count.split(":");
+        String hourString = Integer.toString(Integer.parseInt(split[0])); // removes the 0 at the beginning of the String
+        String minuteString = Integer.toString(Integer.parseInt(split[1])); // removes the 0 at the beginning of the String
+
+        // formatting
+        if (Integer.parseInt(hourString) == 0) {
+            if (Integer.parseInt(minuteString) == 1) {
+                return minuteString + " minute";
+            } else return minuteString + " minutes";
+        } else {
+            if (Integer.parseInt(hourString) != 0 && Integer.parseInt(minuteString) == 0) {
+                if (Integer.parseInt(hourString) == 1) {
+                    return hourString + " hour";
+                } else return hourString + " hours";
+            }
+            else {
+                if (Integer.parseInt(hourString) == 1) {
+                    if (Integer.parseInt(minuteString) == 1) {
+                        return hourString + " hour and " + minuteString + " minute";
+                    }
+                    else return hourString + " hour and " + minuteString + " minutes";
+                } else {
+                    if (Integer.parseInt(minuteString) == 1) {
+                        return hourString + " hours and " + minuteString + " minute";
+                    }
+                    else return hourString + " hours and " + minuteString + " minutes";
+                }
+            }
+        }
     }
 
     private String convert(int time) {
