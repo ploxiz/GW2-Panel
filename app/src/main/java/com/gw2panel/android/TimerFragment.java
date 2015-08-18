@@ -52,19 +52,58 @@ public class TimerFragment extends Fragment {
         TextView eventCount = (TextView) rootView.findViewById(R.id.timer_textView_countTimer);
 
         // TODO: there is small delay when calls the Timer. - BUG
-        Timer timer = new Timer();
+        final Timer timer = new Timer();
+        List<Event> upcomingEvents = timer.getUpcomingEvents();
 
-        populateListView(listView, timer);
+        final ArrayList<TimerObject> timerObject = new ArrayList<>();
 
-        /*final Handler handler = new Handler();
+        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
+        if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
+            timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
+            for (int i = 2; i < upcomingEvents.size(); i++) {
+                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+            }
+        } else {
+            for (int i = 1; i < upcomingEvents.size(); i++) {
+                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+            }
+        }
+        final TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
+        listView.setAdapter(timerAdapter);
+
+        /* TODO:
+         1. find the difference between the current second and the one at which the next event is happening (0)
+         2. refresh after that difference and after refresh at every minute
+         */
+
+        final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                adapter.notifyDataSetChanged();
+                timer.fetch();
+                List<Event> upcomingEvents = timer.getUpcomingEvents();
+
+                timerObject.clear();
+                timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
+                if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
+                    timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
+                    for (int i = 2; i < upcomingEvents.size(); i++) {
+                        timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+                    }
+                } else {
+                    for (int i = 1; i < upcomingEvents.size(); i++) {
+                        timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
+                    }
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timerAdapter.notifyDataSetChanged();
+                    }
+                });
                 handler.postDelayed(this, 60 * 1000);
             }
         }, 60 * 1000);
-*/
         return rootView;
     }
 

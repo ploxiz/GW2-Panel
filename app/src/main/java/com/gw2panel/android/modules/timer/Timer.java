@@ -114,6 +114,7 @@ public class Timer {
     }
 
     public void fetch() {
+        upcomingEvents.clear();
         int nextUpcomingEventIndex = fetchNextUpcomingEventIndex(); System.out.println("Index = " + nextUpcomingEventIndex); // out
         int offset = getCurrentTimeZoneOffset(); System.out.println("Offset: " + convert(offset)); // out
 
