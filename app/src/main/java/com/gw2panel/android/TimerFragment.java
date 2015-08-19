@@ -86,7 +86,7 @@ public class TimerFragment extends Fragment {
         timer.getUpcomingEvents().clear();
         timer.fetch();
         List<Event> upcomingEvents = timer.getUpcomingEvents();
-        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
+        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), "")); // TODO: should properly configure the text for the ongoing events
         if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
             timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
             for (int i = 2; i < upcomingEvents.size(); i++) {
