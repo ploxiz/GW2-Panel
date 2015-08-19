@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.gw2panel.android.adapters.NewsAdapter;
 import com.gw2panel.android.adapters.TimerAdapter;
 import com.gw2panel.android.adapters.objects.TimerObject;
 import com.gw2panel.android.modules.timer.Event;
@@ -19,7 +18,6 @@ import com.gw2panel.android.modules.timer.Timer;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class TimerFragment extends Fragment {
@@ -53,22 +51,9 @@ public class TimerFragment extends Fragment {
 
         // TODO: there is small delay when calls the Timer. - BUG
         final Timer timer = new Timer();
-        List<Event> upcomingEvents = timer.getUpcomingEvents();
-
-        final ArrayList<TimerObject> timerObject = new ArrayList<>();
-
-        timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
-        if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
-            timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
-            for (int i = 2; i < upcomingEvents.size(); i++) {
-                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
-            }
-        } else {
-            for (int i = 1; i < upcomingEvents.size(); i++) {
-                timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
-            }
-        }
-        final TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
+        final ArrayList<TimerObject> timerObjects = new ArrayList<>();
+        buildTimerObjects(timer, timerObjects);
+        final TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObjects);
         listView.setAdapter(timerAdapter);
 
         /* TODO:
@@ -76,34 +61,17 @@ public class TimerFragment extends Fragment {
          2. refresh after that difference and after refresh at every minute
          */
 
+        final int secondsOffset = getSecondOffset();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                timer.fetch();
-                List<Event> upcomingEvents = timer.getUpcomingEvents();
-
-                timerObject.clear();
-                timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
-                if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
-                    timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
-                    for (int i = 2; i < upcomingEvents.size(); i++) {
-                        timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
-                    }
-                } else {
-                    for (int i = 1; i < upcomingEvents.size(); i++) {
-                        timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
-                    }
-                }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timerAdapter.notifyDataSetChanged();
-                    }
-                });
-                handler.postDelayed(this, 60 * 1000);
+                timerObjects.clear();
+                buildTimerObjects(timer, timerObjects);
+                timerAdapter.notifyDataSetChanged();
+                handler.postDelayed(this, 60 * 1000); // TODO: this eventually leads to a slight delay - ENCHANTMENT
             }
-        }, 60 * 1000);
+        }, secondsOffset * 1000);
         return rootView;
     }
 
@@ -114,11 +82,10 @@ public class TimerFragment extends Fragment {
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
-    private void populateListView(ListView listView, Timer timer) {
+    private void buildTimerObjects(Timer timer, ArrayList<TimerObject> timerObject) {
+        timer.getUpcomingEvents().clear();
+        timer.fetch();
         List<Event> upcomingEvents = timer.getUpcomingEvents();
-
-        ArrayList<TimerObject> timerObject = new ArrayList<>();
-
         timerObject.add(new TimerObject(upcomingEvents.get(0).getName(), "In progress", convert(upcomingEvents.get(0).getTime()), ""));
         if (upcomingEvents.get(0).getTime() == upcomingEvents.get(1).getTime()) {
             timerObject.add(new TimerObject(upcomingEvents.get(1).getName(), "In progress", convert(upcomingEvents.get(1).getTime()), ""));
@@ -130,8 +97,10 @@ public class TimerFragment extends Fragment {
                 timerObject.add(new TimerObject(upcomingEvents.get(i).getName(), "Upcoming", convert(upcomingEvents.get(i).getTime()), count(upcomingEvents.get(i).getTime())));
             }
         }
-        TimerAdapter timerAdapter = new TimerAdapter(getActivity(), timerObject);
-        listView.setAdapter(timerAdapter);
+    }
+
+    private int getSecondOffset() {
+        return 60 - new DateTime().getSecondOfMinute();
     }
 
     private String count(int eventTime) {

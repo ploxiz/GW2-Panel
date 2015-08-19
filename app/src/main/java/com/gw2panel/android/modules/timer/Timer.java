@@ -114,7 +114,6 @@ public class Timer {
     }
 
     public void fetch() {
-        upcomingEvents.clear();
         int nextUpcomingEventIndex = fetchNextUpcomingEventIndex(); System.out.println("Index = " + nextUpcomingEventIndex); // out
         int offset = getCurrentTimeZoneOffset(); System.out.println("Offset: " + convert(offset)); // out
 
@@ -167,7 +166,7 @@ public class Timer {
         return 0;
     }
 
-    private int getCurrentTimeZoneOffset() { // TODO: check with negative offset! - BUG - possibly fixed
+    private int getCurrentTimeZoneOffset() {
         DateTimeZone tz = DateTimeZone.getDefault();
         Long instant = DateTime.now().getMillis();
         long offsetInMilliseconds = tz.getOffset(instant);
